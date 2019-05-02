@@ -152,7 +152,7 @@ public class Driver<T> extends Application{
 					coins.add(new CoinPile<Integer>(placement, 1));
 					coinPiles.add(new Circle());
 					coinPiles.get(coinPiles.size()-1).setFill(Color.GOLD);
-					coinPiles.get(coinPiles.size()-1).setRadius(10);
+					coinPiles.get(coinPiles.size()-1).setRadius(steps.get(0).getWidth()/5);
 					coinPiles.get(coinPiles.size()-1).setCenterX((steps.get(0).getWidth() * (placement + 1)) + (10 * placement));
 					coinPiles.get(coinPiles.size()-1).setCenterY(400 - steps.get(0).getWidth());
 					if(placement == 0) {
@@ -236,7 +236,7 @@ public class Driver<T> extends Application{
 		pane.getChildren().addAll(head, body, armL, armR, legL, legR, error, goal);
 		pane.getChildren().addAll(topDoor, leftDoor, rightDoor, knob, pb);
 		pane.getChildren().addAll(coinPiles);
-		pane.getChildren().addAll(tireL, tireR, board);
+		//pane.getChildren().addAll(tireL, tireR, board);
 		
 		
 		for(int k = 0; k < pogoButtons.size(); k++) {
@@ -341,12 +341,12 @@ public class Driver<T> extends Application{
 
 		armR.setStartX(50 + (size/2));
 		armR.setStartY(400 - (size * 1.5));
-		armR.setEndX(50 + size);
+		armR.setEndX(50 + size/2);
 		armR.setEndY(400 - size);
 		
 		armL.setStartX(50 + (size/2));
 		armL.setStartY(400 - (size * 1.5));
-		armL.setEndX(50);
+		armL.setEndX(50 + size/2);
 		armL.setEndY(400 - size);
 		
 		head.setCenterX(50 + (size/2));
