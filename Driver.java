@@ -129,6 +129,30 @@ public class Driver<T> extends Application{
 		
 		do {
 			computerCombo = possible(computerCombo, pogos, steps.size());
+			
+			if(computerCombo.size() == 0) {
+				for(int k = rand.nextInt(3)+4; k > -1; k--) {
+					//Random distance from 1 to 10
+					int temp = rand.nextInt(9)+1;
+					if(temp == 1) {
+						if(rand.nextBoolean())
+							temp++;
+					}
+					if(!tempStick.pogoContain(pogos, temp)) {
+						pogos.add(new PogoStick<Integer>(temp));
+					}
+					
+					computerCombo = new ArrayList<ArrayList<PogoStick<Integer>>>();
+
+					for(int m = 0; m < pogos.size(); m++) {
+						ArrayList<PogoStick<Integer>> tempList = new ArrayList<PogoStick<Integer>>();
+						tempList.add(pogos.get(m));
+						computerCombo.add(tempList);
+					}
+				}
+				
+				pogos.get(0).reOrder(pogos);
+			}
 		}while(computerCombo.size() == 0);
 		
 		//ArrayList<ArrayList<PogoStick<Integer>>> finalized = new ArrayList<ArrayList<PogoStick<Integer>>>();
@@ -156,6 +180,7 @@ public class Driver<T> extends Application{
 					coinPiles.get(coinPiles.size()-1).setFill(Color.GOLD);
 					coinPiles.get(coinPiles.size()-1).setRadius(steps.get(0).getWidth()/5);
 					coinPiles.get(coinPiles.size()-1).setCenterX((steps.get(0).getWidth() * (placement + 1)) + (10 * placement) + steps.get(0).getWidth()/2);
+					coinPiles.get(coinPiles.size()-1).setCenterX(50 + (steps.get(0).getWidth()*placement) + (10 * placement) + steps.get(0).getWidth()/2);
 					coinPiles.get(coinPiles.size()-1).setCenterY(400 - steps.get(0).getWidth());
 					if(placement == 0) {
 						totalCoins++;
@@ -283,6 +308,8 @@ public class Driver<T> extends Application{
 		}
 		return "";
 	}
+	
+
 	
 	public static void scaleBody(Circle head, Line body, Line armL, Line armR, Line legL, Line legR, double size, Circle tireL, Circle tireR, Rectangle board) {
 		//Give all pieces for JJ Body and a steps width

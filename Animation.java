@@ -21,90 +21,58 @@ public class Animation extends Pane{
 		//Count = Pogo Stick Being Used
 		//Size = Width of each step
 		//Skateboard
-		
-		animation = new Timeline(new KeyFrame(Duration.millis(10), e->walk(head, body, armL, armR, legL, legR, count, size, tireL, tireR, board)));
-		animation.setCycleCount(Timeline.INDEFINITE);
+		for(int k = 0; k < count; k++) {
+			animation = new Timeline(new KeyFrame(Duration.millis(10), e->walk(head, body, armL, armR, legL, legR, count, size, tireL, tireR, board)));
+			animation.setCycleCount(Timeline.INDEFINITE);
+		}
 	}
 
 	public void walk(Circle head, Line body, Line armL, Line armR, Line legL, Line legR, int count, double size, Circle tireL, Circle tireR, Rectangle board) {
 	
-		//Use the body to move, if body is at X do this
-		
-		//If the body is currently less than the step we are trying to get to
-		if(body.getLayoutX() < body.getEndX() + (10 * count - 1) + (size * count - 1)) {
+		//Walk using left leg until it passes the right leg
+		//If left leg is less than (behind) the right leg
+		//Else if right leg is less than left leg + size, we are mid way through a full step, and lead with right leg now
+		if(legL.getStartX() < legR.getStartX() + 10 && legL.getStartX() != size + 60) {
 			
-			//If the body layout is less than the body's start X + our step size and the white gap
-			//Then we want to move the left leg, body, and arms moving outwards
-			if(body.getLayoutX() < body.getEndX()-size/2) {
+			
+			legL.setStartX(legL.getStartX() + 1);
+			
+			//If left leg has reached X point in animation, move arms and body
+			if(legL.getStartX() >= (legR.getStartX() - size/2)){
 				
-				legL.setStartX(legL.getStartX() + 1);
-				body.setLayoutX(body.getLayoutX() + 1);
-				head.setLayoutX(head.getLayoutX() + 1);
+				legL.setEndX(legL.getEndX() + .5);
+				legR.setEndX(legR.getEndX() + .5);
+				body.setLayoutX(body.getLayoutX() + .5);
+				head.setCenterX(head.getCenterX() + .5);
+				armL.setLayoutX(armL.getLayoutX() + .5);
+				armR.setLayoutX(armR.getLayoutX() + .5);
+				
 			}
 			
+			
 		}
-		else {
-			System.out.println("Stopping");
-			stop();
+		else if(legR.getStartX() < legL.getStartX() + size ){
+			
+			legR.setStartX(legR.getStartX() + 1);
+			
+			legL.setEndX(legL.getEndX() + .5);
+			legR.setEndX(legR.getEndX() + .5);
+			body.setLayoutX(body.getLayoutX() + .5);
+			head.setCenterX(head.getCenterX() + .5);
+			armL.setLayoutX(armL.getLayoutX() + .5);
+			armR.setLayoutX(armR.getLayoutX() + .5);
+			
+			if(armL.getEndX() != body.getEndX())
+				armL.setEndX(armL.getEndX() + 1);
+			
+			if(armR.getEndX() != body.getEndX())
+				armR.setEndX(armR.getEndX() + .2);
+			
 		}
 		
-		//System.out.println(distance++);
-	}
-//	public void walk(Circle head, Line body, Line armL, Line armR, Line legL, Line legR, int count, double size, Circle tireL, Circle tireR, Rectangle board) {
-//	
-//		//Walk using left leg until it passes the right leg
-//		//If left leg is less than (behind) the right leg
-//		//Else if right leg is less than left leg + size, we are mid way through a full step, and lead with right leg now
-//		if(legL.getLayoutX() < legR.getLayoutX() + 10 && legL.getLayoutX() != (size * count) + (10 * count - 1) + 50) {
-//			
-//			
-//			legL.setLayoutX(legL.getLayoutX() + 1);
-//			
-//			//If left leg has reached X point in animation, move arms and body
-//			if(legL.getLayoutX() >= (legR.getLayoutX() - size/2)){
-//				
-//				legL.setLayoutX(legL.getLayoutX() + .5);
-//				legR.setLayoutX(legR.getLayoutX() + .5);
-//				body.setLayoutX(body.getLayoutX() + .5);
-//				body.setLayoutX(body.getLayoutX() + .5);
-//				head.setCenterX(head.getCenterX() + .5);
-//				armL.setLayoutX(armL.getLayoutX() + .5);
-//				armR.setLayoutX(armR.getLayoutX() + .5);
-//				
-//			}
-//			
-//			//If the left arm is greater than the body's position - size/20
-//			if(armL.getLayoutX() > body.getLayoutX() - size/4)
-//				armL.setLayoutX(armL.getLayoutX() + .1);
-//			
-//			//If the right arm is less than the body position + size/20
-//			if(armR.getLayoutX() < body.getLayoutX() + size/4)
-//				armR.setEndX(armR.getEndX() + .9);
-//			
-//		}
-//		else if(legR.getLayoutX() < legL.getLayoutX() + size ){
-//			
-//			legR.setLayoutX(legR.getLayoutX() + 1);
-//			
-//			legL.setEndX(legL.getEndX() + .5);
-//			legR.setEndX(legR.getEndX() + .5);
-//			body.setLayoutX(body.getLayoutX() + .5);
-//			body.setEndX(body.getEndX() + .5);
-//			head.setCenterX(head.getCenterX() + .5);
-//			armL.setLayoutX(armL.getLayoutX() + .5);
-//			armR.setLayoutX(armR.getLayoutX() + .5);
-//			
-//			if(armL.getEndX() != body.getEndX())
-//				armL.setEndX(armL.getEndX() + 1);
-//			
-//			if(armR.getEndX() != body.getEndX())
-//				armR.setEndX(armR.getEndX() + .2);
-//			
-//		}
-//		
-//		
-//		
-//	}	
+		
+		
+	}	
 	
 //	
 //	public void walk(Circle head, Line body, Line armL, Line armR, Line legL, Line legR, int count, double size, Circle tireL, Circle tireR, Rectangle board) {
@@ -176,38 +144,6 @@ public class Animation extends Pane{
 //		}
 //	}
 
-	
-	public void unparkCar(Rectangle car, Circle tire1, Circle tire2) {
-		//PRE: Input a valid Rectangle, and two Circles
-		//POST: Moves the Rectangle and Circles
-		
-		if(tire1.getCenterY()+tire1.getRadius() < 800 && tire1.getCenterX()-tire1.getRadius() > 200 && tire2.getCenterY()+tire2.getRadius() != 200){
-			car.setY(car.getY()+1);
-			tire1.setCenterY(tire1.getCenterY()+1);
-			tire2.setCenterY(tire2.getCenterY()+1);
-		}
-		else if(tire1.getCenterY()+tire1.getRadius() == 800 && tire1.getCenterX()-tire1.getRadius() > 200) {
-			car.setX(car.getX()-1);
-			tire1.setCenterX(tire1.getCenterX()-1);
-			tire2.setCenterX(tire2.getCenterX()-1);
-		}
-		else if(tire1.getCenterX()-tire1.getRadius() == 200 && tire1.getCenterY()+tire1.getRadius() > 200) {
-			car.setY(car.getY()-1);
-			tire1.setCenterY(tire1.getCenterY()-1);
-			tire2.setCenterY(tire2.getCenterY()-1);
-		}
-		else if(tire1.getCenterY()+tire1.getRadius() == 200 && tire2.getCenterX()+tire2.getRadius() < 1200) {
-			car.setX(car.getX()+1);
-			tire1.setCenterX(tire1.getCenterX()+1);
-			tire2.setCenterX(tire2.getCenterX()+1);
-		}
-		else if(tire2.getCenterX()+tire2.getRadius() == 1200)
-			stop();
-			
-			
-	}
-			
-	
 	public void play() { animation.play(); }
 	public void stop() { animation.stop(); }
 
