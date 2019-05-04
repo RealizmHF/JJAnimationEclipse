@@ -233,11 +233,15 @@ public class Driver<T> extends Application{
         					totalCoins++;
         				}
         			}
-    				
+        			Animation move = null;
     				
     				pbCount += Double.parseDouble(source)/steps.size();
     				pb.setProgress(pbCount);
-    				Animation move = new Animation(head, body, armL, armR, legL, legR, Integer.parseInt(source), steps.get(0).getWidth(), tireL, tireR, board);
+    				for(int k = 0; k < Integer.parseInt(source); k++) {
+    					move = new Animation(head, body, armL, armR, legL, legR, steps.get(0).getWidth(), legL.getStartX());
+        				
+    				}
+    				//Animation move = new Animation(head, body, armL, armR, legL, legR, Integer.parseInt(source), steps.get(0).getWidth(), legL.getStartX());
     				move.play();
     			}
     			else {
@@ -462,7 +466,7 @@ public class Driver<T> extends Application{
 		steps.get(0).setY(y);
 		
 		for(int k = 1; k < steps.size(); k++) {
-			steps.get(k).setX(x + (steps.get(k).getWidth()*k) + (10 * k));
+			steps.get(k).setX(x + (steps.get(k).getWidth() + 10) * k);
 			steps.get(k).setY(y);
 		}
 	}
@@ -529,13 +533,4 @@ public class Driver<T> extends Application{
 			combo.get(k).setLayoutY(700);
 		}
 	}
-//	
-//	class Move implements EventHandler<ActionEvent> {
-//		@Override
-//		public void handle(ActionEvent e) {
-//			
-//			
-//			
-//		}
-//	}
 }

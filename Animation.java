@@ -16,58 +16,60 @@ public class Animation extends Pane{
 	
 	private int counter = 0;
 	
-	public Animation(Circle head, Line body, Line armL, Line armR, Line legL, Line legR, int count, double size, Circle tireL, Circle tireR, Rectangle board) {
+	public Animation(Circle head, Line body, Line armL, Line armR, Line legL, Line legR, double size, double start) {
 		//JJ Jolly
 		//Count = Pogo Stick Being Used
 		//Size = Width of each step
+		//Start = LegL's starting X position before moving
 		//Skateboard
-		for(int k = 0; k < count; k++) {
-			animation = new Timeline(new KeyFrame(Duration.millis(10), e->walk(head, body, armL, armR, legL, legR, count, size, tireL, tireR, board)));
-			animation.setCycleCount(Timeline.INDEFINITE);
-		}
+		
+		animation = new Timeline(new KeyFrame(Duration.millis(10), e->walk(head, body, armL, armR, legL, legR, size, start)));
+		animation.setCycleCount(Timeline.INDEFINITE);
 	}
 
-	public void walk(Circle head, Line body, Line armL, Line armR, Line legL, Line legR, int count, double size, Circle tireL, Circle tireR, Rectangle board) {
+	public void walk(Circle head, Line body, Line armL, Line armR, Line legL, Line legR, double size, double start) {
 	
 		//Walk using left leg until it passes the right leg
 		//If left leg is less than (behind) the right leg
 		//Else if right leg is less than left leg + size, we are mid way through a full step, and lead with right leg now
-		if(legL.getStartX() < legR.getStartX() + 10 && legL.getStartX() != size + 60) {
+		if(legL.getStartX() < start + (size + 10)) {
 			
+			legL.setStartX(legL.getStartX() + size/50);
 			
-			legL.setStartX(legL.getStartX() + 1);
-			
-			//If left leg has reached X point in animation, move arms and body
-			if(legL.getStartX() >= (legR.getStartX() - size/2)){
-				
-				legL.setEndX(legL.getEndX() + .5);
-				legR.setEndX(legR.getEndX() + .5);
-				body.setLayoutX(body.getLayoutX() + .5);
-				head.setCenterX(head.getCenterX() + .5);
-				armL.setLayoutX(armL.getLayoutX() + .5);
-				armR.setLayoutX(armR.getLayoutX() + .5);
-				
+			if(body.getEndX() < (start + size/2) + size + 10) {
+				body.setStartX(body.getStartX() + size/100);
+				body.setEndX(body.getEndX() + size/100);
+				head.setCenterX(head.getCenterX() + size/100);
+
+				if(legL.getEndX() <= start + size + 10) {
+					legL.setEndX(legL.getEndX() + size/100);
+				}
+				if(legR.getEndX() <= start + size + size + 10)
+					legR.setEndX(legR.getEndX() + size/100);
 			}
 			
 			
 		}
-		else if(legR.getStartX() < legL.getStartX() + size ){
+		else if(legR.getStartX() < legL.getStartX() + size){
 			
-			legR.setStartX(legR.getStartX() + 1);
+			legR.setStartX(legR.getStartX() + size/50);
 			
-			legL.setEndX(legL.getEndX() + .5);
-			legR.setEndX(legR.getEndX() + .5);
-			body.setLayoutX(body.getLayoutX() + .5);
-			head.setCenterX(head.getCenterX() + .5);
-			armL.setLayoutX(armL.getLayoutX() + .5);
-			armR.setLayoutX(armR.getLayoutX() + .5);
 			
-			if(armL.getEndX() != body.getEndX())
-				armL.setEndX(armL.getEndX() + 1);
+			if(body.getEndX() < (start + size/2) + size + 10) {
+				body.setStartX(body.getStartX() + size/100);
+				body.setEndX(body.getEndX() + size/100);
+				head.setCenterX(head.getCenterX() + size/100);
+				armL.setLayoutX(armL.getLayoutX() + size/100);
+				armR.setLayoutX(armR.getLayoutX() + size/100);
+			}
+			if(legL.getEndX() <= start + size + 10 + size/2)
+				legL.setEndX(legL.getEndX() + (size)/100);
+			if(legR.getEndX() <= start + size + size/2 + 10)
+				legR.setEndX(legR.getEndX() + (size)/100);
 			
-			if(armR.getEndX() != body.getEndX())
-				armR.setEndX(armR.getEndX() + .2);
-			
+		}
+		else {
+			stop();
 		}
 		
 		
