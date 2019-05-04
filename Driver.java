@@ -127,7 +127,9 @@ public class Driver<T> extends Application{
 			computerCombo.add(tempList);
 		}
 		
-		computerCombo = possible(computerCombo, pogos, steps.size());
+		do {
+			computerCombo = possible(computerCombo, pogos, steps.size());
+		}while(computerCombo.size() == 0);
 		
 		//ArrayList<ArrayList<PogoStick<Integer>>> finalized = new ArrayList<ArrayList<PogoStick<Integer>>>();
 		
@@ -153,7 +155,7 @@ public class Driver<T> extends Application{
 					coinPiles.add(new Circle());
 					coinPiles.get(coinPiles.size()-1).setFill(Color.GOLD);
 					coinPiles.get(coinPiles.size()-1).setRadius(steps.get(0).getWidth()/5);
-					coinPiles.get(coinPiles.size()-1).setCenterX((steps.get(0).getWidth() * (placement + 1)) + (10 * placement));
+					coinPiles.get(coinPiles.size()-1).setCenterX((steps.get(0).getWidth() * (placement + 1)) + (10 * placement) + steps.get(0).getWidth()/2);
 					coinPiles.get(coinPiles.size()-1).setCenterY(400 - steps.get(0).getWidth());
 					if(placement == 0) {
 						totalCoins++;

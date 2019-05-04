@@ -28,55 +28,83 @@ public class Animation extends Pane{
 
 	public void walk(Circle head, Line body, Line armL, Line armR, Line legL, Line legR, int count, double size, Circle tireL, Circle tireR, Rectangle board) {
 	
-		//Walk using left leg until it passes the right leg
-		//If left leg is less than (behind) the right leg
-		//Else if right leg is less than left leg + size, we are mid way through a full step, and lead with right leg now
-		if(legL.getStartX() < legR.getStartX() + 10 && legL.getStartX() != (size * count) + (10 * count - 1) + 50) {
+		//Use the body to move, if body is at X do this
+		
+		//If the body is currently less than the step we are trying to get to
+		if(body.getLayoutX() < body.getEndX() + (10 * count - 1) + (size * count - 1)) {
 			
-			legL.setStartX(legL.getStartX() + 1);
-			
-			//If left leg has reached X point in animation, move arms and body
-			if(legL.getStartX() >= (legR.getStartX() - size/2)){
+			//If the body layout is less than the body's start X + our step size and the white gap
+			//Then we want to move the left leg, body, and arms moving outwards
+			if(body.getLayoutX() < body.getEndX()-size/2) {
 				
-				legL.setEndX(legL.getEndX() + .5);
-				legR.setEndX(legR.getEndX() + .5);
-				body.setStartX(body.getStartX() + .5);
-				body.setEndX(body.getEndX() + .5);
-				head.setCenterX(head.getCenterX() + .5);
-				armL.setStartX(armL.getStartX() + .5);
-				armR.setStartX(armR.getStartX() + .5);
-				
+				legL.setStartX(legL.getStartX() + 1);
+				body.setLayoutX(body.getLayoutX() + 1);
+				head.setLayoutX(head.getLayoutX() + 1);
 			}
 			
-			//If the left arm is greater than the body's position - size/20
-			if(armL.getEndX() > body.getEndX() - size/4)
-				armL.setEndX(armL.getEndX() + .1);
-			
-			//If the right arm is less than the body position + size/20
-			if(armR.getEndX() < body.getEndX() + size/4)
-				armR.setEndX(armR.getEndX() + .9);
-			
 		}
-		else if(legR.getStartX() < legL.getStartX() + size ){
-			
-			legR.setStartX(legR.getStartX() + 1);
-			
-			legL.setEndX(legL.getEndX() + .5);
-			legR.setEndX(legR.getEndX() + .5);
-			body.setStartX(body.getStartX() + .5);
-			body.setEndX(body.getEndX() + .5);
-			head.setCenterX(head.getCenterX() + .5);
-			armL.setStartX(armL.getStartX() + .5);
-			armR.setStartX(armR.getStartX() + .5);
-			
-			armL.setEndX(armL.getEndX() + .9);
-			armR.setEndX(armR.getEndX() + .1);
-			
+		else {
+			System.out.println("Stopping");
+			stop();
 		}
 		
-		
-		
-	}	
+		//System.out.println(distance++);
+	}
+//	public void walk(Circle head, Line body, Line armL, Line armR, Line legL, Line legR, int count, double size, Circle tireL, Circle tireR, Rectangle board) {
+//	
+//		//Walk using left leg until it passes the right leg
+//		//If left leg is less than (behind) the right leg
+//		//Else if right leg is less than left leg + size, we are mid way through a full step, and lead with right leg now
+//		if(legL.getLayoutX() < legR.getLayoutX() + 10 && legL.getLayoutX() != (size * count) + (10 * count - 1) + 50) {
+//			
+//			
+//			legL.setLayoutX(legL.getLayoutX() + 1);
+//			
+//			//If left leg has reached X point in animation, move arms and body
+//			if(legL.getLayoutX() >= (legR.getLayoutX() - size/2)){
+//				
+//				legL.setLayoutX(legL.getLayoutX() + .5);
+//				legR.setLayoutX(legR.getLayoutX() + .5);
+//				body.setLayoutX(body.getLayoutX() + .5);
+//				body.setLayoutX(body.getLayoutX() + .5);
+//				head.setCenterX(head.getCenterX() + .5);
+//				armL.setLayoutX(armL.getLayoutX() + .5);
+//				armR.setLayoutX(armR.getLayoutX() + .5);
+//				
+//			}
+//			
+//			//If the left arm is greater than the body's position - size/20
+//			if(armL.getLayoutX() > body.getLayoutX() - size/4)
+//				armL.setLayoutX(armL.getLayoutX() + .1);
+//			
+//			//If the right arm is less than the body position + size/20
+//			if(armR.getLayoutX() < body.getLayoutX() + size/4)
+//				armR.setEndX(armR.getEndX() + .9);
+//			
+//		}
+//		else if(legR.getLayoutX() < legL.getLayoutX() + size ){
+//			
+//			legR.setLayoutX(legR.getLayoutX() + 1);
+//			
+//			legL.setEndX(legL.getEndX() + .5);
+//			legR.setEndX(legR.getEndX() + .5);
+//			body.setLayoutX(body.getLayoutX() + .5);
+//			body.setEndX(body.getEndX() + .5);
+//			head.setCenterX(head.getCenterX() + .5);
+//			armL.setLayoutX(armL.getLayoutX() + .5);
+//			armR.setLayoutX(armR.getLayoutX() + .5);
+//			
+//			if(armL.getEndX() != body.getEndX())
+//				armL.setEndX(armL.getEndX() + 1);
+//			
+//			if(armR.getEndX() != body.getEndX())
+//				armR.setEndX(armR.getEndX() + .2);
+//			
+//		}
+//		
+//		
+//		
+//	}	
 	
 //	
 //	public void walk(Circle head, Line body, Line armL, Line armR, Line legL, Line legR, int count, double size, Circle tireL, Circle tireR, Rectangle board) {
