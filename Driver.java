@@ -7,8 +7,13 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.Slider;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -58,6 +63,11 @@ public class Driver<T> extends Application{
 	private Line rightDoor = new Line();
 	private Circle knob = new Circle();
 
+	private MenuBar menuBar = new MenuBar();
+	private Menu gameMenu = new Menu("Game");
+    private Menu optionMenu = new Menu("Options");
+    private Slider totalPogos = new Slider();
+    private Slider totalDist = new Slider();
 	
 	private Label goal = new Label();
 	
@@ -68,9 +78,31 @@ public class Driver<T> extends Application{
 		pb.setLayoutY(20);
 		
 		pb.setMinWidth(200);
+		
+		totalPogos.setMin(2);
+		totalPogos.setMax(10);
+		totalPogos.setValue(7);
         
+		totalDist.setMin(5);
+		totalDist.setMax(15);
+		totalDist.setValue(10);
 		
+		optionMenu.getItems().addAll(new SeparatorMenuItem(), new SeparatorMenuItem());
 		
+		Menu pogoSelectMenu = new Menu("Total Pogos");
+		CustomMenuItem pogoMenuItem = new CustomMenuItem(totalPogos);
+        pogoMenuItem.setHideOnClick(false);
+		pogoSelectMenu.getItems().add(pogoMenuItem);
+        
+		Menu distSelectMenu = new Menu("Total Distance");
+		CustomMenuItem distMenuItem = new CustomMenuItem(totalDist);
+        distMenuItem.setHideOnClick(false);
+        distSelectMenu.getItems().add(distMenuItem);
+        
+        optionMenu.getItems().addAll(pogoSelectMenu, distSelectMenu);
+        
+        menuBar.getMenus().addAll(gameMenu, optionMenu);
+        
 		error.setVisible(false);
 		error.setText("This pogo stick cannot be used.");
 		error.setLayoutX(400);
@@ -88,8 +120,8 @@ public class Driver<T> extends Application{
 		
 		PogoStick<Integer> tempStick = new PogoStick<Integer>(0);
 		
-		//Creates between 4 and 7 random pogo sticks
-		for(int k = rand.nextInt(3)+4; k > -1; k--) {
+		//Creates between 2 and 13 random pogo sticks
+		for(int k = (int) (rand.nextInt(3) + totalPogos.getValue()); k > -1; k--) {
 			//Random distance from 1 to 10
 			int temp = rand.nextInt(9)+1;
 			if(temp == 1) {
@@ -111,8 +143,8 @@ public class Driver<T> extends Application{
 		buttonLayout(pogoButtons, 250, 500);
 		
 		int dist = 0;
-		//Random distance required to travel between 5 and 15
-		for(int k = rand.nextInt(10)+5; k > -1; k--) {
+		//Random distance required to travel between 5 and 30
+		for(int k = (int) (rand.nextInt(10) + totalDist.getValue()); k > -1; k--) {
 			
 			if(k > dist)
 				dist = k;
@@ -267,8 +299,7 @@ public class Driver<T> extends Application{
 		pane.getChildren().addAll(head, body, armL, armR, legL, legR, error, goal);
 		pane.getChildren().addAll(topDoor, leftDoor, rightDoor, knob, pb);
 		pane.getChildren().addAll(coinPiles);
-		//pane.getChildren().addAll(tireL, tireR, board);
-		
+		pane.getChildren().add(menuBar);
 		
 		for(int k = 0; k < pogoButtons.size(); k++) {
 			//pogoButtons.get(k).setOnAction(press);
