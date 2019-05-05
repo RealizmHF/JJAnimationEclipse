@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -11,6 +12,7 @@ import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Slider;
@@ -99,6 +101,9 @@ public class Driver<T> extends Application{
         distMenuItem.setHideOnClick(false);
         distSelectMenu.getItems().add(distMenuItem);
         
+        MenuItem newGame = new MenuItem("New Game");
+        
+        gameMenu.getItems().add(newGame);
         optionMenu.getItems().addAll(pogoSelectMenu, distSelectMenu);
         
         menuBar.getMenus().addAll(gameMenu, optionMenu);
@@ -245,8 +250,14 @@ public class Driver<T> extends Application{
                 
                 String source = e.getSource().toString().substring(e.getSource().toString().length()-2, e.getSource().toString().length()-1);
     			
-    			
-    			if(totalUserDistance(userCombo) + Integer.parseInt(source) < steps.size()) {
+                if(e.getSource().equals(newGame)) {
+                	source = "9999";
+                	start(new Stage());
+                	//Put all of the code into a do while loop and a boolean for if they lost/won
+                	//Then ask if they wish to play again
+                	//This newGame button idk...
+                }
+                else if(totalUserDistance(userCombo) + Integer.parseInt(source) < steps.size()) {
     				for(int k = 0; k < userCombo.size(); k++) {
     					if(!userCombo.get(k).isVisible()) {
     						error.setVisible(false);
@@ -305,7 +316,8 @@ public class Driver<T> extends Application{
 			//pogoButtons.get(k).setOnAction(press);
 			pogoButtons.get(k).setOnAction(event);
 		}
-
+		
+		newGame.setOnAction(event);
 		
 		Scene scene = new Scene(pane, 1000, 1000);
 		primary.setTitle("JJ Graphical Adventure   Alpha v1.0");

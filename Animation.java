@@ -26,7 +26,6 @@ public class Animation extends Pane{
 		//Skateboard
 		
 		animation = new Timeline(new KeyFrame(Duration.millis(10), e->walk(head, body, armL, armR, legL, legR, size, start)));
-		anim = new Timeline(new KeyFrame(Duration.millis(10), e->arms(armL, armR, size, start)));
 		animation.setCycleCount(Timeline.INDEFINITE);
 	}
 	
@@ -74,6 +73,13 @@ public class Animation extends Pane{
 				//Move right leg's end x with the body
 				if(legR.getEndX() <= start + size + size + 10)
 					legR.setEndX(legR.getEndX() + size/100);
+				
+				if(armL.getEndX() > armL.getStartX() - size) {
+					armL.setEndX(armL.getEndX() + size/300);
+				}
+				if(armR.getEndX() < body.getEndX() + size) {
+					armR.setEndX(armR.getEndX() + size/50);
+				}
 			}
 			
 			
@@ -97,6 +103,10 @@ public class Animation extends Pane{
 				legL.setEndX(legL.getEndX() + (size)/100);
 			if(legR.getEndX() <= start + size + size/2 + 10)
 				legR.setEndX(legR.getEndX() + (size)/100);
+			
+			if(armL.getEndX() < body.getEndX())
+				armL.setEndX(armL.getEndX() + size/50);
+			
 			
 		}
 		else {
