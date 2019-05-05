@@ -1,6 +1,5 @@
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.layout.Pane;
@@ -10,13 +9,6 @@ public class Animation extends Pane{
 	
 	private Timeline animation;
 	
-	private Timeline anim;
-	
-	private boolean test = false;
-	
-	private int distance = 0;
-	
-	private int counter = 0;
 	
 	public Animation(Circle head, Line body, Line armL, Line armR, Line legL, Line legR, double size, double start) {
 		//JJ Jolly
@@ -87,8 +79,10 @@ public class Animation extends Pane{
 		//Else if right leg start is less than the left legs start + a step
 		else if(legR.getStartX() < legL.getStartX() + size){
 			
+
 			//Right leg's start X moves faster than the rest
-			legR.setStartX(legR.getStartX() + size/50);
+			if(legR.getStartX() < start + size + size + 10)
+				legR.setStartX(legR.getStartX() + size/50);
 			
 			//If body isn't at the middle of the next step
 			//Move the body, head, arms, and legs
@@ -104,7 +98,7 @@ public class Animation extends Pane{
 			if(legR.getEndX() <= start + size + size/2 + 10)
 				legR.setEndX(legR.getEndX() + (size)/100);
 			
-			if(armL.getEndX() < body.getEndX())
+			if(armL.getEndX() <= body.getEndX())
 				armL.setEndX(armL.getEndX() + size/50);
 			
 			
@@ -118,3 +112,43 @@ public class Animation extends Pane{
 	public void stop() { animation.stop(); }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

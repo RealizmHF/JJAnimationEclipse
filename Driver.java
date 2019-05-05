@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -26,11 +25,12 @@ import javafx.stage.Stage;
 
 public class Driver<T> extends Application{
 
-	private double pbCount = 0;
-	private ProgressBar pb = new ProgressBar(pbCount);
+	private ProgressBar pb = new ProgressBar();
 	
 	private int totalCoins = 0;
 	private int pcCollected = 0;
+	
+	private int dist = 0;
 	
 	private int src = 0;
 	
@@ -41,9 +41,12 @@ public class Driver<T> extends Application{
 	private Line legL = new Line();
 	private Line legR = new Line();
 	
-	private Circle tireL = new Circle();
-	private Circle tireR = new Circle();
-	private Rectangle board = new Rectangle();
+	private Menu pogoSelectMenu;
+	private Menu distSelectMenu;
+	private CustomMenuItem pogoMenuItem;
+	private CustomMenuItem distMenuItem;
+	private MenuItem newGame;
+	
 	
 	private Label error = new Label();
 	
@@ -76,53 +79,6 @@ public class Driver<T> extends Application{
 	@Override
 	public void start(Stage primary) {
 		
-		pb.setLayoutX(400);
-		pb.setLayoutY(20);
-		
-		pb.setMinWidth(200);
-		
-		totalPogos.setMin(2);
-		totalPogos.setMax(10);
-		totalPogos.setValue(7);
-        
-		totalDist.setMin(5);
-		totalDist.setMax(15);
-		totalDist.setValue(10);
-		
-		optionMenu.getItems().addAll(new SeparatorMenuItem(), new SeparatorMenuItem());
-		
-		Menu pogoSelectMenu = new Menu("Total Pogos");
-		CustomMenuItem pogoMenuItem = new CustomMenuItem(totalPogos);
-        pogoMenuItem.setHideOnClick(false);
-		pogoSelectMenu.getItems().add(pogoMenuItem);
-        
-		Menu distSelectMenu = new Menu("Total Distance");
-		CustomMenuItem distMenuItem = new CustomMenuItem(totalDist);
-        distMenuItem.setHideOnClick(false);
-        distSelectMenu.getItems().add(distMenuItem);
-        
-        MenuItem newGame = new MenuItem("New Game");
-        
-        gameMenu.getItems().add(newGame);
-        optionMenu.getItems().addAll(pogoSelectMenu, distSelectMenu);
-        
-        menuBar.getMenus().addAll(gameMenu, optionMenu);
-        
-		error.setVisible(false);
-		error.setText("This pogo stick cannot be used.");
-		error.setLayoutX(400);
-		error.setLayoutY(600);
-		System.out.println("Welcome to JJ's Joly Jumping Journey!");
-		System.out.println("\n\nThe object of the game is to use the pogo sticks in the correct order to collect as many coins as possible!");
-		System.out.println("Good Luck!");
-		
-		goal.setVisible(false);
-		goal.setText("Goal!");
-		goal.setFont(new Font(50));
-		goal.setLayoutX(120);
-		goal.setLayoutY(50);
-		
-		
 		PogoStick<Integer> tempStick = new PogoStick<Integer>(0);
 		
 		//Creates between 2 and 13 random pogo sticks
@@ -144,10 +100,6 @@ public class Driver<T> extends Application{
 		Pane pane = new Pane();
 		
 		
-		buttonSize(pogoButtons, pogos, 70, 500);
-		buttonLayout(pogoButtons, 250, 500);
-		
-		int dist = 0;
 		//Random distance required to travel between 5 and 30
 		for(int k = (int) (rand.nextInt(10) + totalDist.getValue()); k > -1; k--) {
 			
@@ -157,6 +109,7 @@ public class Driver<T> extends Application{
 			steps.add(new Rectangle());
 			
 		}
+		
 		
 		for(int m = 0; m < pogos.size(); m++) {
 			ArrayList<PogoStick<Integer>> tempList = new ArrayList<PogoStick<Integer>>();
@@ -201,33 +154,6 @@ public class Driver<T> extends Application{
 			userCombo.get(b).setFont(new Font(20));
 		}
 		
-		stepSize(steps, 700);
-		stepLayout(steps, 50, 400);
-		
-		int totalDist = dist;
-		
-		for(; dist > -1; dist--) {
-			
-			//Random coin piles generated to fit the distance
-			if(dist % 2 != 0) {
-				int placement = rand.nextInt(totalDist);
-				if(!coins.contains(new CoinPile<Integer>(placement, 1))) {
-					coins.add(new CoinPile<Integer>(placement, 1));
-					coinPiles.add(new Circle());
-					coinPiles.get(coinPiles.size()-1).setFill(Color.GOLD);
-					coinPiles.get(coinPiles.size()-1).setRadius(steps.get(0).getWidth()/5);
-					coinPiles.get(coinPiles.size()-1).setCenterX((steps.get(0).getWidth() * (placement + 1)) + (10 * placement) + steps.get(0).getWidth()/2);
-					coinPiles.get(coinPiles.size()-1).setCenterX(50 + (steps.get(0).getWidth()*placement) + (10 * placement) + steps.get(0).getWidth()/2);
-					coinPiles.get(coinPiles.size()-1).setCenterY(400 - steps.get(0).getWidth());
-					if(placement == 0) {
-						totalCoins++;
-						coinPiles.get(coinPiles.size()-1).setVisible(false);
-					}
-				}
-			}
-		}
-		
-		
 		for(int a = 0; a < computerCombo.size(); a++) {
 			for(int c = 0; c < coins.size(); c++) {
 				int tempCost = totalJumpCost(computerCombo.get(a), coins);
@@ -237,9 +163,7 @@ public class Driver<T> extends Application{
 			}
 		}
 		
-		doorSize(topDoor, leftDoor, rightDoor, knob, 900/steps.size() - 10, steps);
-		
-		scaleBody(head, body, armL, armR, legL, legR, steps.get(0).getWidth(), tireL, tireR, board);
+		Layout();
 		
 
 		EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() { 
@@ -252,7 +176,6 @@ public class Driver<T> extends Application{
     			
                 if(e.getSource().equals(newGame)) {
                 	source = "9999";
-                	start(new Stage());
                 	//Put all of the code into a do while loop and a boolean for if they lost/won
                 	//Then ask if they wish to play again
                 	//This newGame button idk...
@@ -278,8 +201,8 @@ public class Driver<T> extends Application{
         			}
         			Animation move = null;
     				
-    				pbCount += Double.parseDouble(source)/steps.size();
-    				pb.setProgress(pbCount);
+    				
+    				pb.setProgress(pb.getProgress() + Double.parseDouble(source)/steps.size());
     				for(int k = 0; k < Integer.parseInt(source); k++) {
     					move = new Animation(head, body, armL, armR, legL, legR, steps.get(0).getWidth(), legL.getStartX());
         				
@@ -313,18 +236,112 @@ public class Driver<T> extends Application{
 		pane.getChildren().add(menuBar);
 		
 		for(int k = 0; k < pogoButtons.size(); k++) {
-			//pogoButtons.get(k).setOnAction(press);
 			pogoButtons.get(k).setOnAction(event);
 		}
 		
 		newGame.setOnAction(event);
 		
 		Scene scene = new Scene(pane, 1000, 1000);
-		primary.setTitle("JJ Graphical Adventure   Alpha v1.0");
+		primary.setTitle("JJ Graphical Adventure  Alpha v9.0");
 		primary.setScene(scene);
 		primary.show();
 		
 		
+	}
+	public void Layout() {
+
+		//Progress Bar settings
+		pb.setLayoutX(400);
+		pb.setLayoutY(20);
+		pb.setMinWidth(200);
+		pb.setProgress(0);
+		
+		//User setting for # of Pogo Sticks and total distance to goal
+		totalPogos.setMin(2);
+		totalPogos.setMax(10);
+		totalPogos.setValue(7);
+	    
+		totalDist.setMin(5);
+		totalDist.setMax(15);
+		totalDist.setValue(10);
+		
+		//Menu settings
+		optionMenu.getItems().addAll(new SeparatorMenuItem(), new SeparatorMenuItem());
+		
+		pogoSelectMenu = new Menu("Total Pogos");
+		pogoMenuItem = new CustomMenuItem(totalPogos);
+	    pogoMenuItem.setHideOnClick(false);
+		pogoSelectMenu.getItems().add(pogoMenuItem);
+	    
+		distSelectMenu = new Menu("Total Distance");
+		distMenuItem = new CustomMenuItem(totalDist);
+	    distMenuItem.setHideOnClick(false);
+	    distSelectMenu.getItems().add(distMenuItem);
+	    
+	    newGame = new MenuItem("New Game");
+	    
+	    gameMenu.getItems().add(newGame);
+	    optionMenu.getItems().addAll(pogoSelectMenu, distSelectMenu);
+	    
+	    menuBar.getMenus().addAll(gameMenu, optionMenu);
+	    
+	    
+	    //Error message settings
+		error.setVisible(false);
+		error.setText("This pogo stick cannot be used.");
+		error.setLayoutX(400);
+		error.setLayoutY(600);
+		
+		
+		//Goal message settings
+		goal.setVisible(false);
+		goal.setText("Goal!");
+		goal.setFont(new Font(50));
+		goal.setLayoutX(120);
+		goal.setLayoutY(50);
+		
+		buttonSize(pogoButtons, pogos, 70, 500);
+		buttonLayout(pogoButtons, 250, 500);
+		
+		stepSize(steps, 700);
+		stepLayout(steps, 50, 400);
+
+		int dist = 0;
+		
+		coinLayout(coins, coinPiles, steps, totalCoins, dist );
+		
+
+		doorSize(topDoor, leftDoor, rightDoor, knob, 900/steps.size() - 10, steps);
+		
+		scaleBody(head, body, armL, armR, legL, legR, steps.get(0).getWidth());
+		
+	}
+	public static void coinLayout(ArrayList<CoinPile<Integer>> coins, ArrayList<Circle> coinPiles, ArrayList<Rectangle> steps, int totalCoins, int dist) {
+		
+		Random r = new Random();
+		
+		int totalDist = dist;
+		
+		for(; dist > -1; dist--) {
+			
+			//Random coin piles generated to fit the distance
+			if(dist % 2 != 0) {
+				int placement = r.nextInt(totalDist);
+				if(!coins.contains(new CoinPile<Integer>(placement, 1))) {
+					coins.add(new CoinPile<Integer>(placement, 1));
+					coinPiles.add(new Circle());
+					coinPiles.get(coinPiles.size()-1).setFill(Color.GOLD);
+					coinPiles.get(coinPiles.size()-1).setRadius(steps.get(0).getWidth()/5);
+					coinPiles.get(coinPiles.size()-1).setCenterX((steps.get(0).getWidth() * (placement + 1)) + (10 * placement) + steps.get(0).getWidth()/2);
+					coinPiles.get(coinPiles.size()-1).setCenterX(50 + (steps.get(0).getWidth()*placement) + (10 * placement) + steps.get(0).getWidth()/2);
+					coinPiles.get(coinPiles.size()-1).setCenterY(400 - steps.get(0).getWidth());
+					if(placement == 0) {
+						totalCoins++;
+						coinPiles.get(coinPiles.size()-1).setVisible(false);
+					}
+				}
+			}
+		}
 	}
 	public static int totalJumpCost(ArrayList<PogoStick<Integer>> combo, ArrayList<CoinPile<Integer>> coins) {
 		//Adds up the total cost of a jump
@@ -344,6 +361,8 @@ public class Driver<T> extends Application{
 		}
 		return total;
 	}
+	
+	@SuppressWarnings("unused")
 	public static String getComboText(ArrayList<ArrayList<PogoStick<Integer>>> combos) {
 		
 		String test = "";
@@ -358,24 +377,9 @@ public class Driver<T> extends Application{
 	
 
 	
-	public static void scaleBody(Circle head, Line body, Line armL, Line armR, Line legL, Line legR, double size, Circle tireL, Circle tireR, Rectangle board) {
+	public static void scaleBody(Circle head, Line body, Line armL, Line armR, Line legL, Line legR, double size) {
 		//Give all pieces for JJ Body and a steps width
 		//Scales based on the size of a step
-		
-		tireL.setRadius(size/8);
-		tireR.setRadius(size/8);
-		board.setHeight(size/4);
-		board.setWidth(size);
-		board.setFill(new Color(Math.random(),Math.random(),Math.random(),1.0));
-
-		tireL.setCenterX(55);
-		tireL.setCenterY(400-size/12);
-		tireR.setCenterX(50 + size - 5);
-		tireR.setCenterY(400 - size/12);
-		
-		board.setLayoutX(50);
-		board.setLayoutY(400-size/3);
-		
 		
 		head.setRadius(size/2);
 		body.minHeight(size);
