@@ -10,34 +10,38 @@ public class Animation extends Pane{
 	private Timeline animation;
 	
 	
-	public Animation(Circle head, Line body, Line armL, Line armR, Line legL, Line legR, double size, double start) {
+	public Animation(Circle head, Line body, Line armL, Line armR, Line legL, Line legR, double size, double start, double count) {
 		//JJ Jolly
 		//Count = Pogo Stick Being Used
 		//Size = Width of each step
 		//Start = LegL's starting X position before moving
 		//Skateboard
-		
-		animation = new Timeline(new KeyFrame(Duration.millis(10), e->walk(head, body, armL, armR, legL, legR, size, start)));
+
+		animation = new Timeline(new KeyFrame(Duration.millis(8), e->walk(head, body, armL, armR, legL, legR, size, start, count)));
 		animation.setCycleCount(Timeline.INDEFINITE);
-	}
-	
-	public void arms(Line armL, Line armR, double size, double start) {
 		
-		boolean max = false;
-		
-		if(!max && armL.getEndX() > armL.getStartX() - size) {
-			armL.setEndX(armL.getEndX() + size/200);
-		}
-		else {
-			armL.setEndX(armL.getEndX() + size);
-		}
 	}
 
-	public void walk(Circle head, Line body, Line armL, Line armR, Line legL, Line legR, double size, double start) {
+	public void walk(Circle head, Line body, Line armL, Line armR, Line legL, Line legR, double size, double start, double count) {
 	
 		//Walk using left leg until it passes the right leg
 		//If left leg is less than (behind) the right leg
 		//Else if right leg is less than left leg + size, we are mid way through a full step, and lead with right leg now
+		
+		
+//		
+//		JUST FOUND OUT THAT I HAVE TO INCLUDE THE NUMBER OF STEPS TO TAKE INTO MY
+//		CALCULATIONS
+//		
+//		ONE IDEA IS TO HAVE A NEW IF STATEMENT FOR EACH "PHASE" or STEP TAKEN
+//		
+//		ANOTHER IDEA IS TO SETUP A MINIMUM AND MAXIMUM IN THE CURRENT IF STATEMENTS BASED ON
+//		THE NUMBER OF STEPS TO TAKE
+//		
+//		
+//		
+		
+		
 		
 		//If left leg's start is less than the initial position plus the step and white space
 		//Move the left leg and not the right

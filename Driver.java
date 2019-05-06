@@ -28,11 +28,10 @@ public class Driver<T> extends Application{
 	private ProgressBar pb = new ProgressBar();
 	
 	private int totalCoins = 0;
-	private int pcCollected = 0;
-	
-	private int dist = 0;
 	
 	private int src = 0;
+	
+	private int dist = 0;
 	
 	private Circle head = new Circle();
 	private Line body = new Line();
@@ -50,7 +49,6 @@ public class Driver<T> extends Application{
 	
 	private Label error = new Label();
 	
-	private Random rand = new Random();
 	
 	private ArrayList<Rectangle> steps = new ArrayList<Rectangle>();
 	
@@ -73,97 +71,37 @@ public class Driver<T> extends Application{
     private Menu optionMenu = new Menu("Options");
     private Slider totalPogos = new Slider();
     private Slider totalDist = new Slider();
+    
+    @SuppressWarnings("unused")
+	private Computer begin;
 	
 	private Label goal = new Label();
 	
 	@Override
 	public void start(Stage primary) {
 		
-		PogoStick<Integer> tempStick = new PogoStick<Integer>(0);
-		
-		//Creates between 2 and 13 random pogo sticks
-		for(int k = (int) (rand.nextInt(3) + totalPogos.getValue()); k > -1; k--) {
-			//Random distance from 1 to 10
-			int temp = rand.nextInt(9)+1;
-			if(temp == 1) {
-				if(rand.nextBoolean())
-					temp++;
-			}
-			if(!tempStick.pogoContain(pogos, temp)) {
-				pogos.add(new PogoStick<Integer>(temp));
-			}
-		}
-		
-		pogos.get(0).reOrder(pogos);
-		
-		
 		Pane pane = new Pane();
 		
+		//User setting for # of Pogo Sticks and total distance to goal
+		totalPogos.setMin(2);
+		totalPogos.setMax(10);
+		totalPogos.setValue(7);
+	    
+		totalDist.setMin(5);
+		totalDist.setMax(15);
+		totalDist.setValue(10);
 		
-		//Random distance required to travel between 5 and 30
-		for(int k = (int) (rand.nextInt(10) + totalDist.getValue()); k > -1; k--) {
-			
-			if(k > dist)
-				dist = k;
-			
-			steps.add(new Rectangle());
-			
-		}
-		
-		
-		for(int m = 0; m < pogos.size(); m++) {
-			ArrayList<PogoStick<Integer>> tempList = new ArrayList<PogoStick<Integer>>();
-			tempList.add(pogos.get(m));
-			computerCombo.add(tempList);
-		}
-		
-		do {
-			computerCombo = possible(computerCombo, pogos, steps.size());
-			
-			if(computerCombo.size() == 0) {
-				for(int k = rand.nextInt(3)+4; k > -1; k--) {
-					//Random distance from 1 to 10
-					int temp = rand.nextInt(9)+1;
-					if(temp == 1) {
-						if(rand.nextBoolean())
-							temp++;
-					}
-					if(!tempStick.pogoContain(pogos, temp)) {
-						pogos.add(new PogoStick<Integer>(temp));
-					}
-					
-					computerCombo = new ArrayList<ArrayList<PogoStick<Integer>>>();
+		begin = new Computer(totalPogos, totalDist, pogos, steps, computerCombo, dist);
 
-					for(int m = 0; m < pogos.size(); m++) {
-						ArrayList<PogoStick<Integer>> tempList = new ArrayList<PogoStick<Integer>>();
-						tempList.add(pogos.get(m));
-						computerCombo.add(tempList);
-					}
-				}
-				
-				pogos.get(0).reOrder(pogos);
-			}
-		}while(computerCombo.size() == 0);
-		
-		//ArrayList<ArrayList<PogoStick<Integer>>> finalized = new ArrayList<ArrayList<PogoStick<Integer>>>();
-		
-		
+		//Initialize userCombo with empty labels
 		for(int b = 0; b < computerCombo.get(computerCombo.size()-1).size(); b++) {
 			userCombo.add(new Label());
 			userCombo.get(b).setVisible(false);
 			userCombo.get(b).setFont(new Font(20));
 		}
 		
-		for(int a = 0; a < computerCombo.size(); a++) {
-			for(int c = 0; c < coins.size(); c++) {
-				int tempCost = totalJumpCost(computerCombo.get(a), coins);
-				if(tempCost > pcCollected && steps.size()-1 == computerCombo.get(a).size()) {
-					pcCollected = tempCost;
-				}
-			}
-		}
 		
-		Layout();
+		Layout(dist);
 		
 
 		EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() { 
@@ -171,16 +109,10 @@ public class Driver<T> extends Application{
             { 
                 // set progress to different level of progressbar 
                  
-                
+                //The pogo stick distance chosen by user
                 String source = e.getSource().toString().substring(e.getSource().toString().length()-2, e.getSource().toString().length()-1);
     			
-                if(e.getSource().equals(newGame)) {
-                	source = "9999";
-                	//Put all of the code into a do while loop and a boolean for if they lost/won
-                	//Then ask if they wish to play again
-                	//This newGame button idk...
-                }
-                else if(totalUserDistance(userCombo) + Integer.parseInt(source) < steps.size()) {
+                if(totalUserDistance(userCombo) + Integer.parseInt(source) < steps.size()) {
     				for(int k = 0; k < userCombo.size(); k++) {
     					if(!userCombo.get(k).isVisible()) {
     						error.setVisible(false);
@@ -199,16 +131,17 @@ public class Driver<T> extends Application{
         					totalCoins++;
         				}
         			}
+        			
         			Animation move = null;
     				
-    				
     				pb.setProgress(pb.getProgress() + Double.parseDouble(source)/steps.size());
-    				for(int k = 0; k < Integer.parseInt(source); k++) {
-    					move = new Animation(head, body, armL, armR, legL, legR, steps.get(0).getWidth(), legL.getStartX());
-        				
-    				}
-    				//Animation move = new Animation(head, body, armL, armR, legL, legR, Integer.parseInt(source), steps.get(0).getWidth(), legL.getStartX());
-    				move.play();
+    				
+
+    				//Move until the left leg reaches the final step
+    				move = new Animation(head, body, armL, armR, legL, legR, steps.get(0).getWidth(), legL.getStartX(), Integer.parseInt(source));
+            			
+        			move.play();
+    				
     			}
     			else {
     				error.setVisible(true);
@@ -239,7 +172,23 @@ public class Driver<T> extends Application{
 			pogoButtons.get(k).setOnAction(event);
 		}
 		
-		newGame.setOnAction(event);
+
+		EventHandler<ActionEvent> menuAction = new EventHandler<ActionEvent>() { 
+            public void handle(ActionEvent e) 
+            { 
+                if(e.getSource().equals(newGame)) {
+                	begin = new Computer(totalDist, totalDist, pogos, steps, computerCombo, dist);
+                	Layout(dist);
+                	
+                	//Put all of the code into a do while loop and a boolean for if they lost/won
+                	//Then ask if they wish to play again
+                	//This newGame button idk...
+                }
+            }
+		};
+		
+		newGame.setOnAction(menuAction);
+               
 		
 		Scene scene = new Scene(pane, 1000, 1000);
 		primary.setTitle("JJ Graphical Adventure  Alpha v9.0");
@@ -248,7 +197,15 @@ public class Driver<T> extends Application{
 		
 		
 	}
-	public void Layout() {
+	
+	public void makeMove(Animation move, int goal) {
+		
+		move = new Animation(head, body, armL, armR, legL, legR, steps.get(0).getWidth(), legL.getStartX(), goal);
+		
+		move.play();
+	}
+	
+	public void Layout(int dist) {
 
 		//Progress Bar settings
 		pb.setLayoutX(400);
@@ -256,14 +213,6 @@ public class Driver<T> extends Application{
 		pb.setMinWidth(200);
 		pb.setProgress(0);
 		
-		//User setting for # of Pogo Sticks and total distance to goal
-		totalPogos.setMin(2);
-		totalPogos.setMax(10);
-		totalPogos.setValue(7);
-	    
-		totalDist.setMin(5);
-		totalDist.setMax(15);
-		totalDist.setValue(10);
 		
 		//Menu settings
 		optionMenu.getItems().addAll(new SeparatorMenuItem(), new SeparatorMenuItem());
@@ -305,8 +254,6 @@ public class Driver<T> extends Application{
 		
 		stepSize(steps, 700);
 		stepLayout(steps, 50, 400);
-
-		int dist = 0;
 		
 		coinLayout(coins, coinPiles, steps, totalCoins, dist );
 		
@@ -343,24 +290,7 @@ public class Driver<T> extends Application{
 			}
 		}
 	}
-	public static int totalJumpCost(ArrayList<PogoStick<Integer>> combo, ArrayList<CoinPile<Integer>> coins) {
-		//Adds up the total cost of a jump
-		
-		int total = 0;
-		
-		int distance = 0;
-		
-		for(int x = 0; x < combo.size(); x++) {
-			for(int y = 0; y < coins.size(); y++) {
-				distance += combo.get(x).getDist();
-				
-				if(distance == coins.get(y).getLocation()) {
-					total++;
-				}
-			}
-		}
-		return total;
-	}
+
 	
 	@SuppressWarnings("unused")
 	public static String getComboText(ArrayList<ArrayList<PogoStick<Integer>>> combos) {
@@ -518,45 +448,7 @@ public class Driver<T> extends Application{
 		}
 	}
 	
-	public static ArrayList<ArrayList<PogoStick<Integer>>> possible(ArrayList<ArrayList<PogoStick<Integer>>> combos, ArrayList<PogoStick<Integer>> p, int goal){
-		//Combos = all possible combinations
-		//p = pogo sticks available
-		//goal = final distance required
-		
-		//Temp combination being edited to add final list of combinations
-		ArrayList<PogoStick<Integer>> tempPogo = new ArrayList<PogoStick<Integer>>();
-		
-		//Go through final list of combinations
-		for(int k = 0; k < combos.size(); k++) {
-			
-				//Loop through useable pogo sticks, adding every possible combination to the final combo list
-				for(int z = 0; z < p.size(); z++) {
-					
-					//TempPogo is equal to the combination at index k of the final combo list
-					tempPogo = new ArrayList<PogoStick<Integer>>();
-					tempPogo.addAll(combos.get(k));
 
-					int tempDistance = tempPogo.get(0).getDistTotal(tempPogo);
-					
-					
-					//If the temp combo distance + pogo stick at index z's distance is less than or equal to goal
-					//Add it to the final combo list
-					if(tempDistance + p.get(z).getDist() <= goal) {
-						tempPogo.add(p.get(z));
-						combos.add(tempPogo);
-					}
-				}
-
-			//If the total distance of the combination at index k in the final combo list is less than goal, remove it
-			if(p.get(0).getDistTotal(combos.get(k)) < goal) {
-				combos.remove(k);
-				k--;
-			}
-		}
-		
-		System.out.println("Combos: " + combos.size());
-		return combos;
-	}
 	
 	public static int totalUserDistance(ArrayList<Label> combo) {
 		
