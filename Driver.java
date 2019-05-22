@@ -72,6 +72,9 @@ public class Driver<T> extends Application{
     private Slider totalPogos = new Slider();
     private Slider totalDist = new Slider();
     
+    //Distance traveled thus far
+    private int distGoal = 0;
+    
     @SuppressWarnings("unused")
 	private Computer begin;
 	
@@ -92,7 +95,7 @@ public class Driver<T> extends Application{
 		totalDist.setValue(10);
 		
 		begin = new Computer(totalPogos, totalDist, pogos, steps, computerCombo, dist);
-
+		
 		//Initialize userCombo with empty labels
 		for(int b = 0; b < computerCombo.get(computerCombo.size()-1).size(); b++) {
 			userCombo.add(new Label());
@@ -136,9 +139,10 @@ public class Driver<T> extends Application{
     				
     				pb.setProgress(pb.getProgress() + Double.parseDouble(source)/steps.size());
     				
-
+    				distGoal += Integer.parseInt(source);
+    				
     				//Move until the left leg reaches the final step
-    				move = new Animation(head, body, armL, armR, legL, legR, steps.get(0).getWidth(), legL.getStartX(), Integer.parseInt(source));
+    				move = new Animation(head, body, armL, armR, legL, legR, steps.get(0).getWidth(), legL.getStartX(), Integer.parseInt(source), distGoal);
             			
         			move.play();
     				
@@ -198,12 +202,6 @@ public class Driver<T> extends Application{
 		
 	}
 	
-	public void makeMove(Animation move, int goal) {
-		
-		move = new Animation(head, body, armL, armR, legL, legR, steps.get(0).getWidth(), legL.getStartX(), goal);
-		
-		move.play();
-	}
 	
 	public void Layout(int dist) {
 
